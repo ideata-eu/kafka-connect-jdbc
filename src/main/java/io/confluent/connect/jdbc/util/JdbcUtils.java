@@ -56,6 +56,7 @@ public class JdbcUtils {
 
   private static final int GET_TABLES_TYPE_COLUMN = 4;
   private static final int GET_TABLES_NAME_COLUMN = 3;
+  private static final int GET_TABLE_SCHEMA = 2;
 
   private static final int GET_COLUMNS_COLUMN_NAME = 4;
   private static final int GET_COLUMNS_IS_NULLABLE = 18;
