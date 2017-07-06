@@ -16,6 +16,7 @@
 
 package io.confluent.connect.jdbc;
 
+import io.confluent.connect.jdbc.source.*;
 import org.apache.kafka.connect.errors.ConnectException;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -36,10 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.confluent.connect.jdbc.source.EmbeddedDerby;
-import io.confluent.connect.jdbc.source.JdbcSourceConnectorConfig;
-import io.confluent.connect.jdbc.source.JdbcSourceTask;
-import io.confluent.connect.jdbc.source.JdbcSourceTaskConfig;
 import io.confluent.connect.jdbc.util.CachedConnectionProvider;
 import io.confluent.connect.jdbc.util.JdbcUtils;
 
@@ -188,7 +185,7 @@ public class JdbcSourceConnectorTest {
 
     PowerMock.mockStatic(JdbcUtils.class);
     EasyMock.expect(JdbcUtils.getTables(EasyMock.anyObject(Connection.class), EasyMock.eq("SOME_SCHEMA")))
-      .andReturn(new ArrayList<String>())
+      .andReturn(new ArrayList<TableWithSchema>())
       .atLeastOnce();
 
     PowerMock.replayAll();

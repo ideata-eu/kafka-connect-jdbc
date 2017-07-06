@@ -16,6 +16,7 @@
 
 package io.confluent.connect.jdbc.sink;
 
+import io.confluent.connect.jdbc.source.TableWithSchema;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,8 +71,8 @@ public class SqliteHelperTest {
     sqliteHelper.createTable(createNonPkTable);
 
     final Map<String, DbTable> tables = new HashMap<>();
-    for (String tableName : JdbcUtils.getTables(sqliteHelper.connection, null)) {
-      tables.put(tableName, DbMetadataQueries.getTableMetadata(sqliteHelper.connection, tableName));
+    for (TableWithSchema table : JdbcUtils.getTables(sqliteHelper.connection, null)) {
+      tables.put(table.getTableName(), DbMetadataQueries.getTableMetadata(sqliteHelper.connection, table.getTableName()));
     }
 
     assertEquals(tables.size(), 3);

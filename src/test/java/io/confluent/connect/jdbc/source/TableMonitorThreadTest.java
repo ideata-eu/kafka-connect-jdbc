@@ -47,15 +47,15 @@ import static org.junit.Assert.assertEquals;
 public class TableMonitorThreadTest {
   private static final long POLL_INTERVAL = 100;
 
-  private static final List<String> FIRST_TOPIC_LIST = Arrays.asList("foo");
-  private static final List<String> VIEW_TOPIC_LIST = Arrays.asList("");
-  private static final List<String> SECOND_TOPIC_LIST = Arrays.asList("foo", "bar");
-  private static final List<String> THIRD_TOPIC_LIST = Arrays.asList("foo", "bar", "baz");
-  public static final Set<String> DEFAULT_TABLE_TYPES = Collections.unmodifiableSet(
-          new HashSet<String>(Arrays.asList("TABLE"))
+  private static final List<TableWithSchema> FIRST_TOPIC_LIST = Arrays.asList("foo");
+  private static final List<TableWithSchema> VIEW_TOPIC_LIST = Arrays.asList("");
+  private static final List<TableWithSchema> SECOND_TOPIC_LIST = Arrays.asList("foo", "bar");
+  private static final List<TableWithSchema> THIRD_TOPIC_LIST = Arrays.asList("foo", "bar", "baz");
+  public static final Set<TableWithSchema> DEFAULT_TABLE_TYPES = Collections.unmodifiableSet(
+          new HashSet<TableWithSchema>(Arrays.asList("TABLE"))
   );
-  public static final Set<String> VIEW_TABLE_TYPES = Collections.unmodifiableSet(
-          new HashSet<String>(Arrays.asList("VIEW"))
+  public static final Set<TableWithSchema> VIEW_TABLE_TYPES = Collections.unmodifiableSet(
+          new HashSet<TableWithSchema>(Arrays.asList("VIEW"))
   );
   private EmbeddedDerby db;
   private CachedConnectionProvider cachedConnectionProvider;
@@ -80,9 +80,9 @@ public class TableMonitorThreadTest {
   public void testSingleLookup() throws Exception {
     tableMonitorThread = new TableMonitorThread(cachedConnectionProvider, context, null, POLL_INTERVAL, null, null, DEFAULT_TABLE_TYPES);
 
-    EasyMock.expect(JdbcUtils.getTables(cachedConnectionProvider.getValidConnection(), null, DEFAULT_TABLE_TYPES)).andAnswer(new IAnswer<List<String>>() {
+    EasyMock.expect(JdbcUtils.getTables(cachedConnectionProvider.getValidConnection(), null, DEFAULT_TABLE_TYPES)).andAnswer(new IAnswer<List<TableWithSchema>>() {
       @Override
-      public List<String> answer() throws Throwable {
+      public List<TableWithSchema> answer() throws Throwable {
         tableMonitorThread.shutdown();
         return FIRST_TOPIC_LIST;
       }

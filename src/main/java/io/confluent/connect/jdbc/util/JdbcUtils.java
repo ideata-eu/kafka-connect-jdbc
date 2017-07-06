@@ -16,6 +16,7 @@
 
 package io.confluent.connect.jdbc.util;
 
+import io.confluent.connect.jdbc.source.TableWithSchema;
 import org.apache.kafka.connect.errors.ConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +80,7 @@ public class JdbcUtils {
    * @return a list of tables
    * @throws SQLException
    */
-  public static List<String> getTables(Connection conn, String schemaPattern) throws SQLException {
+  public static List<TableWithSchema> getTables(Connection conn, String schemaPattern) throws SQLException {
     return getTables(conn, schemaPattern, DEFAULT_TABLE_TYPES);
   }
 
@@ -89,19 +90,20 @@ public class JdbcUtils {
    * @param types a set of table types that should be included in the results
    * @throws SQLException
    */
-  public static List<String> getTables(Connection conn, String schemaPattern, Set<String> types) throws SQLException {
+  public static List<TableWithSchema> getTables(Connection conn, String schemaPattern, Set<String> types) throws SQLException {
     DatabaseMetaData metadata = conn.getMetaData();
     try (ResultSet rs = metadata.getTables(null, schemaPattern, "%", null)) {
-      List<String> tableNames = new ArrayList<>();
+      List<TableWithSchema> tableNames = new ArrayList<>();
       while (rs.next()) {
         if (types.contains(rs.getString(GET_TABLES_TYPE_COLUMN))) {
           String colName = rs.getString(GET_TABLES_NAME_COLUMN);
+          String schema = rs.getString(GET_TABLE_SCHEMA);
           // SQLite JDBC driver does not correctly mark these as system tables
           if (metadata.getDatabaseProductName().equals("SQLite") && colName.startsWith("sqlite_")) {
             continue;
           }
 
-          tableNames.add(colName);
+          tableNames.add(new TableWithSchema(schema, colName));
         }
       }
       return tableNames;

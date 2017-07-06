@@ -16,6 +16,11 @@
 
 package io.confluent.connect.jdbc;
 
+import io.confluent.connect.jdbc.source.JdbcSourceConnectorConfig;
+import io.confluent.connect.jdbc.source.JdbcSourceTaskConfig;
+import io.confluent.connect.jdbc.source.TableMonitorThread;
+import io.confluent.connect.jdbc.source.TableWithSchema;
+import io.confluent.connect.jdbc.source.JdbcSourceTask;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.connect.connector.Task;
@@ -34,10 +39,6 @@ import java.util.Map;
 import java.util.Set;
 
 import io.confluent.connect.jdbc.util.CachedConnectionProvider;
-import io.confluent.connect.jdbc.source.JdbcSourceConnectorConfig;
-import io.confluent.connect.jdbc.source.JdbcSourceTask;
-import io.confluent.connect.jdbc.source.JdbcSourceTaskConfig;
-import io.confluent.connect.jdbc.source.TableMonitorThread;
 import io.confluent.connect.jdbc.util.StringUtils;
 import io.confluent.connect.jdbc.util.Version;
 
@@ -118,11 +119,11 @@ public class JdbcSourceConnector extends SourceConnector {
       taskConfigs.add(taskProps);
       return taskConfigs;
     } else {
-      List<String> currentTables = tableMonitorThread.tables();
+      List<TableWithSchema> currentTables = tableMonitorThread.tables();
       int numGroups = Math.min(currentTables.size(), maxTasks);
-      List<List<String>> tablesGrouped = ConnectorUtils.groupPartitions(currentTables, numGroups);
+      List<List<TableWithSchema>> tablesGrouped = ConnectorUtils.groupPartitions(currentTables, numGroups);
       List<Map<String, String>> taskConfigs = new ArrayList<>(tablesGrouped.size());
-      for (List<String> taskTables : tablesGrouped) {
+      for (List<TableWithSchema> taskTables : tablesGrouped) {
         Map<String, String> taskProps = new HashMap<>(configProperties);
         taskProps.put(JdbcSourceTaskConfig.TABLES_CONFIG,
                       StringUtils.join(taskTables, ","));

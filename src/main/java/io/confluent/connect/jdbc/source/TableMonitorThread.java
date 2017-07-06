@@ -46,7 +46,7 @@ public class TableMonitorThread extends Thread {
   private final long pollMs;
   private Set<String> whitelist;
   private Set<String> blacklist;
-  private List<String> tables;
+  private List<TableWithSchema> tables;
   private Set<String> tableTypes;
 
   public TableMonitorThread(CachedConnectionProvider cachedConnectionProvider, ConnectorContext context, String schemaPattern, long pollMs,
@@ -85,7 +85,7 @@ public class TableMonitorThread extends Thread {
     }
   }
 
-  public synchronized List<String> tables() {
+  public synchronized List<TableWithSchema> tables() {
     //TODO: Timeout should probably be user-configurable or class-level constant
     final long timeout = 10000L;
     long started = System.currentTimeMillis();
@@ -109,7 +109,7 @@ public class TableMonitorThread extends Thread {
   }
 
   private synchronized boolean updateTables() {
-    final List<String> tables;
+    final List<TableWithSchema> tables;
     try {
       tables = JdbcUtils.getTables(cachedConnectionProvider.getValidConnection(), schemaPattern, tableTypes);
       log.debug("Got the following tables: " + Arrays.toString(tables.toArray()));
@@ -119,18 +119,18 @@ public class TableMonitorThread extends Thread {
       return false;
     }
 
-    final List<String> filteredTables;
+    final List<TableWithSchema> filteredTables;
     if (whitelist != null) {
       filteredTables = new ArrayList<>(tables.size());
-      for (String table : tables) {
-        if (whitelist.contains(table)) {
+      for (TableWithSchema table : tables) {
+        if (whitelist.contains(table.getTableName())) {
           filteredTables.add(table);
         }
       }
     } else if (blacklist != null) {
       filteredTables = new ArrayList<>(tables.size());
-      for (String table : tables) {
-        if (!blacklist.contains(table)) {
+      for (TableWithSchema table : tables) {
+        if (!blacklist.contains(table.getTableName())) {
           filteredTables.add(table);
         }
       }
@@ -140,7 +140,7 @@ public class TableMonitorThread extends Thread {
 
     if (!filteredTables.equals(this.tables)) {
       log.debug("After filtering we got tables: " + Arrays.toString(filteredTables.toArray()));
-      List<String> previousTables = this.tables;
+      List<TableWithSchema> previousTables = this.tables;
       this.tables = filteredTables;
       notifyAll();
       // Only return true if the table list wasn't previously null, i.e. if this was not the

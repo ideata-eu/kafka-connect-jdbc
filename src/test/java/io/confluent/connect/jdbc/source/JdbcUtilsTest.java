@@ -64,7 +64,7 @@ public class JdbcUtilsTest {
     db.createTable("zab", "id", "INT");
     assertEquals(
         new HashSet<String>(Arrays.asList("test", "foo", "zab")),
-        new HashSet<String>(JdbcUtils.getTables(db.getConnection(), null)));
+        new HashSet<TableWithSchema>(JdbcUtils.getTables(db.getConnection(), null)));
   }
 
   @Test
@@ -82,13 +82,13 @@ public class JdbcUtilsTest {
 
     assertEquals(
       new HashSet<String>(Arrays.asList("public_table")),
-      new HashSet<String>(JdbcUtils.getTables(db.getConnection(), "PUBLIC_SCHEMA")));
+      new HashSet<TableWithSchema>(JdbcUtils.getTables(db.getConnection(), "PUBLIC_SCHEMA")));
     assertEquals(
       new HashSet<String>(Arrays.asList("private_table", "another_private_table")),
-      new HashSet<String>(JdbcUtils.getTables(db.getConnection(), "PRIVATE_SCHEMA")));
+      new HashSet<TableWithSchema>(JdbcUtils.getTables(db.getConnection(), "PRIVATE_SCHEMA")));
     assertEquals(
       new HashSet<String>(Arrays.asList("some_table", "public_table", "private_table", "another_private_table")),
-      new HashSet<String>(JdbcUtils.getTables(db.getConnection(), null)));
+      new HashSet<TableWithSchema>(JdbcUtils.getTables(db.getConnection(), null)));
   }
 
   @Test
