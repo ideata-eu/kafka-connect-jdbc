@@ -126,7 +126,9 @@ public class JdbcSourceConnectorTest {
     List<Map<String, String>> configs = connector.taskConfigs(10);
     assertEquals(1, configs.size());
     assertTaskConfigsHaveParentConfigs(configs);
-    assertEquals("test", configs.get(0).get(JdbcSourceTaskConfig.TABLES_CONFIG));
+
+    String res = configs.get(0).get(JdbcSourceTaskConfig.TABLES_CONFIG);
+    assertEquals("APP:test", res);
     assertNull(configs.get(0).get(JdbcSourceTaskConfig.QUERY_CONFIG));
     connector.stop();
   }
@@ -143,11 +145,11 @@ public class JdbcSourceConnectorTest {
     assertEquals(3, configs.size());
     assertTaskConfigsHaveParentConfigs(configs);
 
-    assertEquals("test1,test2", configs.get(0).get(JdbcSourceTaskConfig.TABLES_CONFIG));
+    assertEquals("APP:test1,APP:test2", configs.get(0).get(JdbcSourceTaskConfig.TABLES_CONFIG));
     assertNull(configs.get(0).get(JdbcSourceTaskConfig.QUERY_CONFIG));
-    assertEquals("test3", configs.get(1).get(JdbcSourceTaskConfig.TABLES_CONFIG));
+    assertEquals("APP:test3", configs.get(1).get(JdbcSourceTaskConfig.TABLES_CONFIG));
     assertNull(configs.get(1).get(JdbcSourceTaskConfig.QUERY_CONFIG));
-    assertEquals("test4", configs.get(2).get(JdbcSourceTaskConfig.TABLES_CONFIG));
+    assertEquals("APP:test4", configs.get(2).get(JdbcSourceTaskConfig.TABLES_CONFIG));
     assertNull(configs.get(2).get(JdbcSourceTaskConfig.QUERY_CONFIG));
 
     connector.stop();

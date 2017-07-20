@@ -35,4 +35,9 @@ public class TableWithSchema {
   public void setTableName(String tableName) {
     this.tableName = tableName;
   }
+
+  @Override
+  public String toString() {
+      return  tableSchema == null ? "" : tableSchema  + ":" + tableName;
+  }
 }
