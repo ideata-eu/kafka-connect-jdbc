@@ -128,7 +128,7 @@ public class JdbcSourceConnectorTest {
     assertTaskConfigsHaveParentConfigs(configs);
 
     String res = configs.get(0).get(JdbcSourceTaskConfig.TABLES_CONFIG);
-    assertEquals("APP:test", res);
+    assertEquals("APP.test", res);
     assertNull(configs.get(0).get(JdbcSourceTaskConfig.QUERY_CONFIG));
     connector.stop();
   }
@@ -145,11 +145,11 @@ public class JdbcSourceConnectorTest {
     assertEquals(3, configs.size());
     assertTaskConfigsHaveParentConfigs(configs);
 
-    assertEquals("APP:test1,APP:test2", configs.get(0).get(JdbcSourceTaskConfig.TABLES_CONFIG));
+    assertEquals("APP.test1,APP.test2", configs.get(0).get(JdbcSourceTaskConfig.TABLES_CONFIG));
     assertNull(configs.get(0).get(JdbcSourceTaskConfig.QUERY_CONFIG));
-    assertEquals("APP:test3", configs.get(1).get(JdbcSourceTaskConfig.TABLES_CONFIG));
+    assertEquals("APP.test3", configs.get(1).get(JdbcSourceTaskConfig.TABLES_CONFIG));
     assertNull(configs.get(1).get(JdbcSourceTaskConfig.QUERY_CONFIG));
-    assertEquals("APP:test4", configs.get(2).get(JdbcSourceTaskConfig.TABLES_CONFIG));
+    assertEquals("APP.test4", configs.get(2).get(JdbcSourceTaskConfig.TABLES_CONFIG));
     assertNull(configs.get(2).get(JdbcSourceTaskConfig.QUERY_CONFIG));
 
     connector.stop();

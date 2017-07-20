@@ -38,6 +38,24 @@ public class TableWithSchema {
 
   @Override
   public String toString() {
-      return  tableSchema == null ? "" : tableSchema  + ":" + tableName;
+    return  tableSchema == null ? "" : tableSchema  + "." + tableName;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    TableWithSchema that = (TableWithSchema) o;
+
+    if (tableName != null ? !tableName.equals(that.tableName) : that.tableName != null) return false;
+    return tableSchema != null ? tableSchema.equals(that.tableSchema) : that.tableSchema == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = tableName != null ? tableName.hashCode() : 0;
+    result = 31 * result + (tableSchema != null ? tableSchema.hashCode() : 0);
+    return result;
   }
 }
