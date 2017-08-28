@@ -218,6 +218,15 @@ public abstract class DbDialect {
     };
   }
 
+  protected Transform<String> identity(){
+    return new Transform<String>() {
+      @Override
+      public void apply(StringBuilder builder, String identifier) {
+        builder.append(identifier);
+      }
+    };
+  }
+
   protected Transform<String> prefixedEscaper(final String prefix) {
     return new Transform<String>() {
       @Override
@@ -267,6 +276,8 @@ public abstract class DbDialect {
         return new MySqlDialect();
       case "postgresql":
         return new PostgreSqlDialect();
+      case "phoenix":
+        return new PhoenixDialect();
       default:
         return new GenericDialect();
     }
@@ -276,6 +287,11 @@ public abstract class DbDialect {
     if (!url.startsWith("jdbc:")) {
       throw new ConnectException(String.format("Not a valid JDBC URL: %s", url));
     }
+
+    if (url.contains("phoenix")) {
+      return "phoenix";
+    }
+
     final int index = url.indexOf("://", "jdbc:".length());
     if (index < 0) {
       throw new ConnectException(String.format("Not a valid JDBC URL: %s", url));

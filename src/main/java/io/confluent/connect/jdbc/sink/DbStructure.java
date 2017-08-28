@@ -108,6 +108,10 @@ public class DbStructure {
     //   The table might have extra columns defined (hopefully with default values), which is not a case we check for here.
     //   We also don't check if the data types for columns that do line-up are compatible.
 
+    if(connection.getMetaData().getDatabaseProductName() == "Phoenix") {
+      return false;
+    }
+
     final DbTable tableMetadata = tableMetadataLoadingCache.get(connection, tableName);
     final Map<String, DbTableColumn> dbColumns = tableMetadata.columns;
 

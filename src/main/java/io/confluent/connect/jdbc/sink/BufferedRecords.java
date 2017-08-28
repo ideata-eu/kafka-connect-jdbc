@@ -122,16 +122,24 @@ public class BufferedRecords {
   }
 
   private String getInsertSql() {
+    boolean phoenix = false;
+    try {
+      phoenix = connection.getMetaData().getDatabaseProductName() == "Phoenix";
+    } catch (SQLException ex){
+
+    }
+
     switch (config.insertMode) {
       case INSERT:
         return dbDialect.getInsert(tableName, fieldsMetadata.keyFieldNames, fieldsMetadata.nonKeyFieldNames);
       case UPSERT:
-        if (fieldsMetadata.keyFieldNames.isEmpty()) {
+        if (fieldsMetadata.keyFieldNames.isEmpty() && !phoenix) {
           throw new ConnectException(String.format(
               "Write to table '%s' in UPSERT mode requires key field names to be known, check the primary key configuration", tableName
           ));
         }
-        return dbDialect.getUpsertQuery(tableName, fieldsMetadata.keyFieldNames, fieldsMetadata.nonKeyFieldNames);
+        String query = dbDialect.getUpsertQuery(tableName, fieldsMetadata.keyFieldNames, fieldsMetadata.nonKeyFieldNames);
+        return query;
       default:
         throw new ConnectException("Invalid insert mode");
     }

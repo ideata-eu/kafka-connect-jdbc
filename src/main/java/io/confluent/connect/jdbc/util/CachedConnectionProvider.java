@@ -63,6 +63,20 @@ public class CachedConnectionProvider {
 
   private void newConnection() throws SQLException {
     log.debug("Attempting to connect to {}", url);
+    //TODO: Remove maybe unescessary
+    if (url.contains("phoenix")){
+      try {
+        Class.forName("org.apache.phoenix.jdbc.PhoenixDriver").newInstance();
+      } catch (ClassNotFoundException ex){
+        log.error("Phoenix driver not found:", ex);
+
+      } catch (IllegalAccessException ex){
+        log.error("Phoenix driver not found:", ex);
+
+      } catch (InstantiationException ex){
+        log.error("Phoenix driver not found:", ex);
+      }
+    }
     connection = DriverManager.getConnection(url, username, password);
     onConnect(connection);
   }

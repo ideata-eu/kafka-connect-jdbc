@@ -44,12 +44,17 @@ public abstract class DbMetadataQueries {
     final String product = meta.getDatabaseProductName();
     final String schema = getSchema(connection, product);
 
-    log.info("Checking table:{} exists for product:{} schema:{} catalog:", tableName, product, schema, catalog);
+    if(product == "Phoenix"){
+      return true;
+    } else {
 
-    try (ResultSet rs = meta.getTables(catalog, schema, tableName, new String[]{"TABLE"})) {
-      final boolean exists = rs.next();
-      log.info("product:{} schema:{} catalog:{} -- table:{} is {}", product, schema, catalog, tableName, exists ? "present" : "absent");
-      return exists;
+      log.info("Checking table:{} exists for product:{} schema:{} catalog:", tableName, product, schema, catalog);
+
+      try (ResultSet rs = meta.getTables(catalog, schema, tableName, new String[]{"TABLE"})) {
+        final boolean exists = rs.next();
+        log.info("product:{} schema:{} catalog:{} -- table:{} is {}", product, schema, catalog, tableName, exists ? "present" : "absent");
+        return exists;
+      }
     }
   }
 
